@@ -4,27 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuickBite - Food Delivery Service</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- 
-      ============================================================
-      CUSTOM CSS STYLES
-      ============================================================
-    -->
+    <!-- Using Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- Base & Layout --- */
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Inter', sans-serif; /* Using a common, clean font */
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); }
+        .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
 
         /* --- Login/Auth Page --- */
         #loginPage {
@@ -40,18 +31,19 @@
             z-index: 100;
             transition: opacity 0.3s ease;
         }
-        #mainContent {
-            display: none;
+        #mainContent { display: none; }
+        .auth-toggle-btn {
+            background: none;
+            border: none;
+            color: #ee5a24;
+            font-weight: 600;
+            cursor: pointer;
         }
+        .auth-toggle-btn:hover { text-decoration: underline; }
 
         /* --- Restaurant & Menu --- */
-        .restaurant-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .restaurant-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
+        .restaurant-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .restaurant-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .offer-badge {
             position: absolute;
             top: 10px;
@@ -63,29 +55,11 @@
             font-size: 12px;
             font-weight: bold;
         }
-        .veg-indicator {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: green;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        .nonveg-indicator {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #e53e3e;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        .menu-item-card {
-            transition: all 0.3s ease;
-        }
-        .menu-item-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+        .veg-indicator { width: 16px; height: 16px; border-radius: 50%; background: green; display: inline-block; margin-right: 5px; }
+        .nonveg-indicator { width: 16px; height: 16px; border-radius: 50%; background: #e53e3e; display: inline-block; margin-right: 5px; }
+        .menu-item-card { transition: all 0.3s ease; }
+        .menu-item-card:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .filter-btn.active { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; }
 
         /* --- Cart & Notifications --- */
         .cart-notification {
@@ -97,62 +71,41 @@
             padding: 12px 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 50;
+            /* Increased z-index to appear over modals */
+            z-index: 100; 
             display: none;
-            animation: fadeIn 0.3s ease-out;
+            align-items: center;
         }
-
-        /* --- Chatbot --- */
-        .chat-bubble {
-            max-width: 70%;
-            border-radius: 20px;
-            padding: 12px 16px;
-            margin: 8px;
-        }
-        .user-bubble {
-            background: #ee5a24;
+        /* Style for the close button */
+        #closeNotification {
+            background: none;
+            border: none;
             color: white;
-            margin-left: auto;
-            border-bottom-right-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 16px;
+            cursor: pointer;
+            line-height: 1;
         }
-        .bot-bubble {
-            background: #f8f9fa;
-            color: #333;
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
-        }
-        .chat-container {
-            max-height: 400px;
-            overflow-y: auto;
+        #closeNotification:hover {
+            opacity: 0.8;
         }
         
+        #cartSidebar { z-index: 60; }
+        #cartOverlay { z-index: 59; }
+
+        /* --- Chatbot --- */
+        .chat-bubble { max-width: 70%; border-radius: 20px; padding: 12px 16px; margin: 8px; }
+        .user-bubble { background: #ee5a24; color: white; margin-left: auto; border-bottom-right-radius: 5px; }
+        .bot-bubble { background: #f8f9fa; color: #333; margin-right: auto; border-bottom-left-radius: 5px; }
+        .chat-container { max-height: 400px; overflow-y: auto; }
+
         /* --- Animations & Utilities --- */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-        .error-border {
-            border-color: #ef4444 !important;
-        }
-        .error-message {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-        .rupee-symbol:before {
-            content: "₹";
-        }
-        .discount-tag {
-            background: #38a169;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-left: 8px;
-        }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
         .loading-spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #ee5a24;
@@ -170,118 +123,103 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- 
-      ============================================================
-      LOGIN & SIGN UP PAGE
-      ============================================================
-    -->
-    <div id="loginPage" class="gradient-bg">
-        
-        <!-- Login Form Box -->
-        <div id="loginFormBox" class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md mx-4">
-            <div class="text-center mb-8">
-                <div class="flex justify-center items-center mb-6">
-                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/58dca9c0-be32-45ed-96df-58ba9324d0dd.png" 
-                         alt="QuickBite logo" class="w-16 h-16 rounded-full">
-                </div>
-                <h1 class="text-3xl font-bold text-gray-800">QuickBite</h1>
-                <p id="loginMessage" class="text-gray-600 mt-2">Sign in to access your account</p>
-            </div>
-            <form id="loginForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Username</label>
-                    <input type="text" id="username" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                           placeholder="Enter your username">
-                    <p id="usernameError" class="error-message hidden"></p>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 mb-2">Password</label>
-                    <input type="password" id="password" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                           placeholder="Enter your password">
-                    <p id="passwordError" class="error-message hidden"></p>
-                </div>
-                <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold text-lg">
-                    Sign In
-                </button>
-            </form>
-            <div class="mt-4 text-center">
-                <p class="text-gray-600 text-sm">Hint: Without Sign In Your Username and password are "admin"</p>
-            </div>
-            <div class="mt-6 text-center">
-                <p class="text-gray-600">Don't have an account? 
-                    <button id="showSignUpBtn" type="button" class="text-orange-500 hover:underline font-semibold">Sign Up</button>
-                </p>
-            </div>
-        </div>
 
-        <!-- Sign Up Form Box (Initially hidden) -->
-        <div id="signUpFormBox" class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md mx-4 hidden">
-            <div class="text-center mb-8">
-                <div class="flex justify-center items-center mb-6">
-                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/58dca9c0-be32-45ed-96df-58ba9324d0dd.png" 
-                         alt="QuickBite logo" class="w-16 h-16 rounded-full">
+    <!-- LOGIN & SIGN UP PAGE -->
+    <div id="loginPage" class="gradient-bg">
+        <div class="w-full max-w-md mx-4">
+
+            <!-- Sign In Box -->
+            <div id="loginFormBox" class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="text-center mb-8">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/58dca9c0-be32-45ed-96df-58ba9324d0dd.png"
+                         alt="QuickBite logo" class="w-16 h-16 rounded-full mx-auto mb-6">
+                    <h1 class="text-3xl font-bold text-gray-800">QuickBite</h1>
+                    <p id="loginMessage" class="text-gray-600 mt-2">Sign in to access your account</p>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-800">Create Account</h1>
-                <p class="text-gray-600 mt-2">Get started with QuickBite</p>
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Username</label>
+                        <input type="text" id="username" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                               placeholder="Enter your username">
+                        <p id="usernameError" class="error-message hidden"></p>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2">Password</label>
+                        <input type="password" id="password" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                               placeholder="Enter your password">
+                        <p id="passwordError" class="error-message hidden"></p>
+                    </div>
+                    <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold text-lg">
+                        Sign In
+                    </button>
+                </form>
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600">Don't have an account?
+                        <button id="showSignUpBtn" class="auth-toggle-btn">Sign Up</button>
+                    </p>
+                </div>
             </div>
-            <form id="signUpForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Username</label>
-                    <input type="text" id="signUpUsername" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                           placeholder="Choose a username">
-                    <p id="signUpUsernameError" class="error-message hidden"></p>
+
+            <!-- Sign Up Box -->
+            <div id="signUpFormBox" class="bg-white rounded-2xl shadow-xl p-8 hidden">
+                <div class="text-center mb-8">
+                     <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/58dca9c0-be32-45ed-96df-58ba9324d0dd.png"
+                         alt="QuickBite logo" class="w-16 h-16 rounded-full mx-auto mb-6">
+                    <h1 class="text-3xl font-bold text-gray-800">Create Account</h1>
+                    <p class="text-gray-600 mt-2">Get started in seconds</p>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Email</label>
-                    <input type="email" id="signUpEmail" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                           placeholder="Enter your email">
-                    <p id="signUpEmailError" class="error-message hidden"></p>
+                <form id="signUpForm">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Username</label>
+                        <input type="text" id="signUpUsername" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                               placeholder="Choose a username">
+                        <p id="signUpUsernameError" class="error-message hidden"></p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" id="signUpEmail" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                               placeholder="Enter your email">
+                        <p id="signUpEmailError" class="error-message hidden"></p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Password</label>
+                        <input type="password" id="signUpPassword" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                               placeholder="Create a password (min. 6 chars)">
+                        <p id="signUpPasswordError" class="error-message hidden"></p>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2">Confirm Password</label>
+                        <input type="password" id="confirmPassword" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                               placeholder="Confirm your password">
+                        <p id="confirmPasswordError" class="error-message hidden"></p>
+                    </div>
+                    <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold text-lg">
+                        Create Account
+                    </button>
+                </form>
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600">Already have an account?
+                        <button id="showLoginBtn" class="auth-toggle-btn">Sign In</button>
+                    </p>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 mb-2">Password</label>
-                    <input type="password" id="signUpPassword" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                           placeholder="Create a password (min. 6 chars)">
-                    <p id="signUpPasswordError" class="error-message hidden"></p>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 mb-2">Confirm Password</label>
-                    <input type="password" id="confirmPassword" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-                           placeholder="Confirm your password">
-                    <p id="confirmPasswordError" class="error-message hidden"></p>
-                </div>
-                <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold text-lg">
-                    Sign Up
-                </button>
-            </form>
-            <div class="mt-6 text-center">
-                <p class="text-gray-600">Already have an account? 
-                    <button id="showLoginBtn" type="button" class="text-orange-500 hover:underline font-semibold">Sign In</button>
-                </p>
             </div>
+
         </div>
     </div>
 
-    <!-- 
-      ============================================================
-      MAIN APPLICATION CONTENT
-      ============================================================
-    -->
+    <!-- MAIN APPLICATION CONTENT -->
     <div id="mainContent">
-        <!-- 
-          ----------------------------------------------------------
-          NAVIGATION BAR
-          ----------------------------------------------------------
-        -->
+        <!-- NAVIGATION BAR -->
         <nav class="gradient-bg text-white py-4 px-6 shadow-lg fixed top-0 w-full z-40">
             <div class="container mx-auto flex justify-between items-center">
                 <div class="flex items-center space-x-2">
-                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/58dca9c0-be32-45ed-96df-58ba9324d0dd.png" alt="QuickBite logo featuring a vibrant orange delivery scooter with food container" class="w-10 h-10 rounded-full">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/58dca9c0-be32-45ed-96df-58ba9324d0dd.png" alt="QuickBite logo" class="w-10 h-10 rounded-full">
                     <span class="text-2xl font-bold">QuickBite</span>
                 </div>
                 <div class="hidden md:flex space-x-6">
@@ -304,12 +242,8 @@
             </div>
         </nav>
 
-        <!-- 
-          ----------------------------------------------------------
-          CART SIDEBAR
-          ----------------------------------------------------------
-        -->
-        <div id="cartSidebar" class="fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300">
+        <!-- CART SIDEBAR -->
+        <div id="cartSidebar" class="fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300">
             <div class="p-6 h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold">Your Cart</h2>
@@ -339,31 +273,28 @@
                 </div>
             </div>
         </div>
-        <div id="cartOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+        <div id="cartOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
 
-        <!-- Cart Notification Popup -->
+        <!-- Cart Notification -->
+        <!-- MODIFIED: Added close button and new structure -->
         <div id="cartNotification" class="cart-notification">
             <i class="fas fa-check-circle mr-2"></i>
-            <span>Item added to cart!</span>
+            <span id="notificationMessage">Item added to cart!</span>
+            <button id="closeNotification" title="Close">&times;</button>
         </div>
 
-        <!-- Main Content Area -->
+        <!-- MAIN CONTENT -->
         <main class="container mx-auto px-6 py-8 pt-24">
-            <!-- 
-              ----------------------------------------------------------
-              HOME SECTION
-              ----------------------------------------------------------
-            -->
+            <!-- HOME SECTION -->
             <section id="home" class="mb-12 fade-in">
-                <!-- Hero Banner -->
                 <div class="relative">
-                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4da259a3-7686-4d26-bad4-59025bdfdb47.png" alt="Delicious food spread featuring various cuisines from multiple restaurants with vibrant colors" class="w-full h-64 object-cover rounded-2xl">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4da259a3-7686-4d26-bad4-59025bdfdb47.png" alt="Delicious food spread" class="w-full h-64 object-cover rounded-2xl">
                     <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-2xl">
                         <div class="text-center text-white p-4">
                             <h1 class="text-4xl md:text-5xl font-bold mb-4">Food Delivered to Your Door</h1>
                             <p class="text-xl mb-6">Order from your favorite restaurants in minutes</p>
                             <div class="relative max-w-2xl mx-auto">
-                                <input type="text" id="searchInput" placeholder="Search for restaurants or food..." 
+                                <input type="text" id="searchInput" placeholder="Search for restaurants or food..."
                                        class="w-full px-6 py-4 rounded-full text-gray-800 focus:outline-none">
                                 <button id="searchBtn" class="absolute right-2 top-2 gradient-bg text-white px-6 py-2 rounded-full">
                                     Search
@@ -371,11 +302,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Why Choose Us -->
-                <div class="mt-8 text-center">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Why Choose QuickBite?</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto">Discover a world of flavors with QuickBite. Enjoy fast delivery, a wide range of cuisines, and seamless ordering from top restaurants. Your next meal is just a click away!</p>
                 </div>
                 
                 <!-- Special Offers Section -->
@@ -406,32 +332,23 @@
                             </div>
                             <div>
                                 <h3 class="font-bold">Free Dessert</h3>
-                                <p class="text-sm text-gray-600">With orders above ₹499</Lp>
+                                <p class="text-sm text-gray-600">With orders above ₹499</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 
-              ----------------------------------------------------------
-              RESTAURANTS SECTION
-              ----------------------------------------------------------
-            -->
+            <!-- RESTAURANTS SECTION -->
             <section id="restaurants" class="mb-12 fade-in">
                 <h2 class="text-3xl font-bold text-gray-800 mb-8">Popular Restaurants</h2>
-                <!-- Filters -->
                 <div class="mb-6 flex flex-wrap gap-2">
                     <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm filter-btn active" data-filter="all">All</button>
                     <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm filter-btn" data-filter="italian">Italian</button>
                     <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm filter-btn" data-filter="chinese">Chinese</button>
                     <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm filter-btn" data-filter="indian">Indian</button>
                     <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm filter-btn" data-filter="american">American</button>
-                    <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm filter-btn" data-filter="mexican">Mexican</button>
-                    <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm filter-btn" data-filter="thai">Thai</button>
-                    <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm filter-btn" data-filter="desserts">Desserts</button>
                 </div>
-                <!-- Restaurant List -->
                 <div id="restaurantList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- Restaurants will be loaded here -->
                 </div>
@@ -442,11 +359,7 @@
                 </div>
             </section>
 
-            <!-- 
-              ----------------------------------------------------------
-              RESTAURANT MENU MODAL
-              ----------------------------------------------------------
-            -->
+            <!-- RESTAURANT MENU MODAL -->
             <div id="menuModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
                 <div class="bg-white rounded-2xl w-full max-w-4xl max-h-screen overflow-hidden flex flex-col">
                     <div class="relative">
@@ -455,7 +368,7 @@
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
-                    <div class="p-6 overflow-y-auto flex-1">
+                    <div class="p-6 flex-1 overflow-y-auto">
                         <h2 id="modalRestaurantName" class="text-2xl font-bold mb-4"></h2>
                         <div id="modalMenuItems" class="space-y-4">
                             <!-- Menu items will be loaded here -->
@@ -464,11 +377,7 @@
                 </div>
             </div>
 
-            <!-- 
-              ----------------------------------------------------------
-              ORDERS SECTION
-              ----------------------------------------------------------
-            -->
+            <!-- ORDERS SECTION -->
             <section id="orders" class="mb-12 fade-in">
                 <h2 class="text-3xl font-bold text-gray-800 mb-8">Your Orders</h2>
                 <div id="orderList" class="bg-white rounded-2xl shadow-md p-6">
@@ -476,20 +385,15 @@
                         <p class="text-gray-600 text-center py-8">No orders yet. Your orders will appear here!</p>
                     </div>
                     <div class="text-center mt-6">
-                        <button id="addOrderBtn" class="gradient-bg text-white px-6 py-2 rounded-lg font-semibold">Add Mock Order</button>
+                        <button id="addOrderBtn" class="gradient-bg text-white px-6 py-2 rounded-lg font-semibold" style="display: none;">Add Mock Order</button>
                     </div>
                 </div>
             </section>
 
-            <!-- 
-              ----------------------------------------------------------
-              CONTACT SECTION
-              ----------------------------------------------------------
-            -->
+            <!-- CONTACT SECTION -->
             <section id="contact" class="mb-12 fade-in">
                 <h2 class="text-3xl font-bold text-gray-800 mb-8">Contact Us</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Contact Form -->
                     <div class="bg-white rounded-2xl shadow-md p-6">
                         <h3 class="text-xl font-bold mb-4">Get in Touch</h3>
                         <form id="contactForm">
@@ -511,7 +415,6 @@
                             <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold">Send Message</button>
                         </form>
                     </div>
-                    <!-- Support Info & Message History -->
                     <div class="bg-white rounded-2xl shadow-md p-6">
                         <h3 class="text-xl font-bold mb-4">Support Information</h3>
                         <p class="text-gray-600 mb-4">We're here to help with your food delivery needs!</p>
@@ -527,68 +430,8 @@
                     </div>
                 </div>
             </section>
-
-            <!-- 
-              ----------------------------------------------------------
-              DELIVERY TIP SECTION
-              ----------------------------------------------------------
-            -->
-            <section class="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-8 mb-12 fade-in">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Appreciate Your Delivery Hero</h2>
-                    <p class="text-gray-600">Show some love to the people who bring food to your door</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Tip Form -->
-                    <div class="bg-white p-6 rounded-2xl shadow-md">
-                        <h3 class="text-xl font-bold mb-4">Rate and Tip Your Delivery Partner</h3>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Delivery Partner Name</label>
-                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg" 
-                                   placeholder="Enter delivery partner name" id="deliveryPartnerName">
-                            <p id="partnerNameError" class="error-message hidden"></p>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Rate your experience</label>
-                            <div class="flex space-x-1 text-2xl">
-                                <span class="text-gray-300 cursor-pointer" data-rating="1">★</span>
-                                <span class="text-gray-300 cursor-pointer" data-rating="2">★</span>
-                                <span class="text-gray-300 cursor-pointer" data-rating="3">★</span>
-                                <span class="text-gray-300 cursor-pointer" data-rating="4">★</span>
-                                <span class="text-gray-300 cursor-pointer" data-rating="5">★</span>
-                            </div>
-                            <p id="ratingError" class="error-message hidden"></p>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Tip Amount</label>
-                            <div class="grid grid-cols-3 gap-2 mb-2">
-                                <button class="bg-gray-100 py-2 rounded-lg tip-btn" data-amount="50">₹50</button>
-                                <button class="bg-gray-100 py-2 rounded-lg tip-btn" data-amount="100">₹100</button>
-                                <button class="bg-gray-100 py-2 rounded-lg tip-btn" data-amount="200">₹200</button>
-                            </div>
-                            <input type="number" placeholder="Custom amount" min="0" step="1"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg" id="customTip">
-                            <p id="tipError" class="error-message hidden"></p>
-                        </div>
-                        <button class="w-full gradient-bg text-white py-3 rounded-lg font-semibold" id="submitTip">
-                            Send Tip & Rating
-                        </button>
-                    </div>
-                    <!-- Tip History -->
-                    <div class="bg-white p-6 rounded-2xl shadow-md">
-                        <h3 class="text-xl font-bold mb-4">Recent Tips Given</h3>
-                        <div id="tipHistory" class="space-y-3">
-                            <p class="text-gray-600 text-center py-8">No tips given yet. Your appreciation will appear here!</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 
-              ----------------------------------------------------------
-              CHATBOT SECTION
-              ----------------------------------------------------------
-            -->
+            
+            <!-- CHATBOT SECTION -->
             <section class="bg-white rounded-2xl shadow-md p-6 mb-12 fade-in">
                 <div class="flex items-center mb-6">
                     <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center mr-4">
@@ -605,7 +448,7 @@
                     </div>
                 </div>
                 <div class="flex space-x-2">
-                    <input type="text" placeholder="Type your message..." 
+                    <input type="text" placeholder="Type your message..."
                            class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none" id="chatInput">
                     <button class="gradient-bg text-white px-6 py-3 rounded-lg" id="sendMessage">
                         <i class="fas fa-paper-plane"></i>
@@ -620,11 +463,7 @@
             </section>
         </main>
 
-        <!-- 
-          ----------------------------------------------------------
-          FOOTER
-          ----------------------------------------------------------
-        -->
+        <!-- FOOTER -->
         <footer class="bg-gray-800 text-white py-12">
             <div class="container mx-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -665,28 +504,44 @@
         </footer>
     </div>
 
-    <!-- 
-      ============================================================
-      JAVASCRIPT
-      ============================================================
-    -->
-    <script>
-        // ==========================================================
+<script>
+// ==========================================================
 // --- STEP 7: CONNECTING TO THE BACKEND ---
 // ==========================================================
 
-// Define the single source of truth for your backend API
-const API_URL = 'https://quickbite-backend-2ll2.onrender.com/api';
+// ==========================================================
+// This URL now points to your LIVE Render backend.
+// ==========================================================
+const API_URL = 'https://quickbite-backend.onrender.com/api';
 
-// --- Global Notification Function (Unchanged) ---
+
+// --- Global Notification Function (MODIFIED) ---
+let notificationTimeout;
 function showCartNotification(message) {
     const notification = document.getElementById('cartNotification');
-    notification.querySelector('span').textContent = message;
-    notification.style.display = 'block';
+    const messageEl = document.getElementById('notificationMessage');
+    const closeBtn = document.getElementById('closeNotification');
+
+    // Clear any existing hide timer
+    if (notificationTimeout) {
+        clearTimeout(notificationTimeout);
+    }
     
-    setTimeout(() => {
+    messageEl.textContent = message;
+    notification.style.display = 'flex'; // Use flex to align items
+
+    const hideNotification = () => {
         notification.style.display = 'none';
-    }, 3000);
+        if (notificationTimeout) {
+            clearTimeout(notificationTimeout);
+        }
+    };
+
+    // Auto-hide after 3 seconds
+    notificationTimeout = setTimeout(hideNotification, 3000);
+
+    // Allow manual close
+    closeBtn.onclick = hideNotification;
 }
 
 // --- Login, Sign Up & Auth ---
@@ -714,7 +569,7 @@ function showCartNotification(message) {
     // Other Elements
     const logoutBtn = document.getElementById('logoutBtn');
 
-    // Toggle Listeners (Unchanged)
+    // Toggle Listeners
     showSignUpBtn.addEventListener('click', () => {
         loginFormBox.classList.add('hidden');
         signUpFormBox.classList.remove('hidden');
@@ -729,7 +584,6 @@ function showCartNotification(message) {
         clearSignUpErrors();
     });
 
-    // === CHANGED IN STEP 7 ===
     // Check if user is already logged in (by checking for the token)
     window.checkLoginStatus = function() {
         const token = localStorage.getItem('token');
@@ -757,13 +611,17 @@ function showCartNotification(message) {
     }
 
     function clearSignUpErrors() {
-        document.getElementById('signUpUsernameError').classList.add('hidden');
-        document.getElementById('signUpEmailError').classList.add('hidden');
-        document.getElementById('signUpPasswordError').classList.add('hidden');
-        document.getElementById('confirmPasswordError').classList.add('hidden');
+        const signUpUsernameError = document.getElementById('signUpUsernameError');
+        const signUpEmailError = document.getElementById('signUpEmailError');
+        const signUpPasswordError = document.getElementById('signUpPasswordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+
+        if(signUpUsernameError) signUpUsernameError.classList.add('hidden');
+        if(signUpEmailError) signUpEmailError.classList.add('hidden');
+        if(signUpPasswordError) signUpPasswordError.classList.add('hidden');
+        if(confirmPasswordError) confirmPasswordError.classList.add('hidden');
     }
 
-    // === CHANGED IN STEP 7 ===
     // Handle login form submission (now async and calls API)
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -783,7 +641,6 @@ function showCartNotification(message) {
 
             if (response.ok) {
                 // --- SUCCESS ---
-                // Store the token from the server
                 localStorage.setItem('token', data.token);
                 
                 loginPage.style.opacity = '0';
@@ -802,7 +659,6 @@ function showCartNotification(message) {
         }
     });
 
-    // === CHANGED IN STEP 7 ===
     // Handle Sign Up form submission (now async and calls API)
     signUpForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -828,10 +684,26 @@ function showCartNotification(message) {
         
         // --- Frontend validation ---
         let hasError = false;
-        if (!username) { /* ... (all your existing validation) ... */ hasError = true; }
-        if (!email || !email.includes('@')) { /* ... */ hasError = true; }
-        if (password.length < 6) { /* ... */ hasError = true; }
-        if (password !== confirmPassword) { /* ... */ hasError = true; }
+        if (!username) { 
+            signUpUsernameError.textContent = 'Username is required';
+            signUpUsernameError.classList.remove('hidden');
+            hasError = true; 
+        }
+        if (!email || !email.includes('@')) { 
+            signUpEmailError.textContent = 'A valid email is required';
+            signUpEmailError.classList.remove('hidden');
+            hasError = true; 
+        }
+        if (password.length < 6) { 
+            signUpPasswordError.textContent = 'Password must be at least 6 characters';
+            signUpPasswordError.classList.remove('hidden');
+            hasError = true; 
+        }
+        if (password !== confirmPassword) { 
+            confirmPasswordError.textContent = 'Passwords do not match';
+            confirmPasswordError.classList.remove('hidden');
+            hasError = true; 
+        }
         
         if (hasError) return;
 
@@ -862,7 +734,6 @@ function showCartNotification(message) {
         }
     });
 
-    // === CHANGED IN STEP 7 ===
     // Handle logout (now removes token)
     logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('token'); // Remove the token
@@ -884,18 +755,10 @@ function showCartNotification(message) {
     });
 })();
 
-// --- App Initialization (REMOVED) ---
-// We removed the localStorage initialization for orders, messages, etc.
-// That data will now come from our database.
-
-// === CHANGED IN STEP 7 ===
 // --- Restaurant & Menu Modal ---
-// The old mock `restaurants` array is GONE.
 (function() {
-    // We keep a local cache of restaurant data to avoid re-fetching
     let allRestaurants = [];
     
-    // Make loadRestaurants globally accessible
     window.loadRestaurants = async function() {
         const restaurantList = document.getElementById('restaurantList');
         restaurantList.innerHTML = '<p class="text-gray-600">Loading restaurants...</p>';
@@ -904,23 +767,21 @@ function showCartNotification(message) {
             const response = await fetch(`${API_URL}/restaurants`);
             if (!response.ok) throw new Error('Failed to fetch');
             
-            allRestaurants = await response.json(); // Store in our cache
+            allRestaurants = await response.json(); 
             
-            restaurantList.innerHTML = ''; // Clear "Loading..."
+            restaurantList.innerHTML = ''; 
             
             if (allRestaurants.length === 0) {
-                 restaurantList.innerHTML = '<p class="text-gray-600">No restaurants found. (Did you run the import_data.py script?)</p>';
+                 restaurantList.innerHTML = '<p class="text-gray-600">No restaurants found. (Backend might be asleep or database is empty)</p>';
                  return;
             }
 
-            // Display only 8, but we have all of them in `allRestaurants`
             allRestaurants.slice(0, 8).forEach(restaurant => {
                 const restaurantCard = document.createElement('div');
                 restaurantCard.className = 'restaurant-card bg-white rounded-2xl shadow-md overflow-hidden';
                 restaurantCard.setAttribute('data-cuisine', restaurant.cuisine);
                 restaurantCard.setAttribute('data-name', restaurant.name.toLowerCase());
                 
-                // Use restaurant._id from the database
                 restaurantCard.innerHTML = `
                     <div class="relative">
                         <img src="${restaurant.image}" alt="${restaurant.name}" class="w-full h-48 object-cover" onerror="this.src='https://placehold.co/600x400/ff6b6b/white?text=${restaurant.name}';">
@@ -940,10 +801,9 @@ function showCartNotification(message) {
                 restaurantList.appendChild(restaurantCard);
             });
             
-            // Add event listeners to menu buttons
             document.querySelectorAll('.view-menu').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    const restaurantId = e.target.getAttribute('data-id'); // This is the MongoDB _id
+                    const restaurantId = e.target.getAttribute('data-id');
                     openMenuModal(restaurantId);
                 });
             });
@@ -954,14 +814,10 @@ function showCartNotification(message) {
         }
     }
 
-    // === CHANGED IN STEP 7 ===
-    // Now fetches the single restaurant's data
     async function openMenuModal(restaurantId) {
-        // Find in cache first, if not, fetch
         let restaurant = allRestaurants.find(r => r._id === restaurantId);
         
         if (!restaurant) {
-            // This is a fallback, but data should be in the cache
             try {
                 const response = await fetch(`${API_URL}/restaurants/${restaurantId}`);
                 if (!response.ok) throw new Error('Restaurant not found');
@@ -983,7 +839,6 @@ function showCartNotification(message) {
         modalImage.onerror = () => { modalImage.src = `https://placehold.co/600x400/ff6b6b/white?text=${restaurant.name}`; };
         modalName.textContent = restaurant.name;
         
-        // Populate menu items
         modalMenu.innerHTML = '';
         restaurant.menu.forEach(item => {
             const menuItem = document.createElement('div');
@@ -1005,23 +860,19 @@ function showCartNotification(message) {
             modalMenu.appendChild(menuItem);
         });
         
-        // Show modal
         modal.classList.remove('hidden');
         
-        // Add event listeners to add to cart buttons
         modalMenu.querySelectorAll('.add-to-cart').forEach(button => {
             button.addEventListener('click', (e) => {
                 const itemId = parseInt(e.target.getAttribute('data-id'));
                 const restaurantId = e.target.getAttribute('data-restaurant-id');
-                // Find the full item object to pass to the cart
                 const restaurant = allRestaurants.find(r => r._id === restaurantId);
                 const item = restaurant.menu.find(i => i.id === itemId);
-                window.addToCart(item, restaurant); // Call global cart function
+                window.addToCart(item, restaurant); 
             });
         });
     }
 
-    // Close menu modal (Unchanged)
     document.getElementById('closeModal').addEventListener('click', () => {
         document.getElementById('menuModal').classList.add('hidden');
     });
@@ -1029,7 +880,6 @@ function showCartNotification(message) {
 
 // --- Cart & Checkout ---
 (function() {
-    // ... (All cart elements are the same) ...
     const cartBtn = document.getElementById('cartBtn');
     const cartSidebar = document.getElementById('cartSidebar');
     const closeCart = document.getElementById('closeCart');
@@ -1038,12 +888,7 @@ function showCartNotification(message) {
     const cartSubtotal = document.getElementById('cartSubtotal');
     const cartTotal = document.getElementById('cartTotal');
     const checkoutBtn = document.getElementById('checkoutBtn');
-
-    // === CHANGED IN STEP 7 ===
-    // Cart logic now uses `localStorage` as a *temporary* holder
-    // The database is the source of truth for orders
     
-    // `item` and `restaurant` are now full objects
     window.addToCart = function(item, restaurant) {
         if (!item) return;
         
@@ -1082,8 +927,6 @@ function showCartNotification(message) {
         }
     }
 
-    // `renderCartItems` and `updateCartItemQuantity` are mostly unchanged
-    // as they just manage the `localStorage` cart.
     function renderCartItems() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         cartItems.innerHTML = '';
@@ -1118,7 +961,6 @@ function showCartNotification(message) {
             cartItems.appendChild(cartItem);
         });
         
-        // Add event listeners to quantity buttons
         cartItems.querySelectorAll('.increase-quantity').forEach(button => {
             button.addEventListener('click', (e) => {
                 const itemId = parseInt(e.target.getAttribute('data-id'));
@@ -1130,12 +972,11 @@ function showCartNotification(message) {
         cartItems.querySelectorAll('.decrease-quantity').forEach(button => {
             button.addEventListener('click', (e) => {
                 const itemId = parseInt(e.target.getAttribute('data-id'));
-                const restaurantId = parseInt(e.target.getAttribute('data-restaurant'));
+                const restaurantId = e.target.getAttribute('data-restaurant');
                 updateCartItemQuantity(itemId, restaurantId, -1);
             });
         });
         
-        // Update totals
         const deliveryFee = 40;
         cartSubtotal.textContent = `₹${subtotal.toFixed(2)}`;
         cartTotal.textContent = `₹${(subtotal + deliveryFee).toFixed(2)}`;
@@ -1171,8 +1012,6 @@ function showCartNotification(message) {
     closeCart.addEventListener('click', closeCartSidebar);
     cartOverlay.addEventListener('click', closeCartSidebar);
 
-    // === CHANGED IN STEP 7 ===
-    // Checkout now calls the protected API
     checkoutBtn.addEventListener('click', async () => {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         if (cart.length === 0) {
@@ -1193,7 +1032,6 @@ function showCartNotification(message) {
         const deliveryFee = 40;
         const total = subtotal + deliveryFee;
 
-        // Prepare order for API
         const orderData = {
             items: cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
             total: total
@@ -1204,7 +1042,7 @@ function showCartNotification(message) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // Send the token!
+                    'Authorization': `Bearer ${token}` 
                 },
                 body: JSON.stringify(orderData)
             });
@@ -1212,11 +1050,11 @@ function showCartNotification(message) {
             const data = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('cart', JSON.stringify([])); // Clear cart
+                localStorage.setItem('cart', JSON.stringify([])); 
                 updateCartCount();
                 closeCartSidebar();
                 showCartNotification(`Order placed successfully!`);
-                window.loadOrders(); // Reload orders from DB
+                window.loadOrders(); 
             } else {
                 throw new Error(data.message);
             }
@@ -1232,9 +1070,7 @@ function showCartNotification(message) {
 })();
 
 // --- Search & Filter (Unchanged) ---
-// This section still filters the *visible* cards, so its logic is fine.
 (function() {
-    // ... (all code in this section remains the same) ...
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
     const filterButtons = document.querySelectorAll('.filter-btn');
@@ -1273,13 +1109,10 @@ function showCartNotification(message) {
     });
 })();
 
-// === CHANGED IN STEP 7 ===
 // --- Order History ---
-// Now fetches from the protected API
 (function() {
     const orderHistory = document.getElementById('orderHistory');
-    const addOrderBtn = document.getElementById('addOrderBtn');
-
+    
     window.loadOrders = async function() {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -1292,7 +1125,7 @@ function showCartNotification(message) {
         try {
             const response = await fetch(`${API_URL}/orders`, {
                 headers: {
-                    'Authorization': `Bearer ${token}` // Send the token!
+                    'Authorization': `Bearer ${token}` 
                 }
             });
 
@@ -1313,7 +1146,6 @@ function showCartNotification(message) {
             orders.forEach(order => {
                 const orderDiv = document.createElement('div');
                 orderDiv.className = 'border-b border-gray-200 pb-4';
-                // Use data from the server (note: order.total is already a number)
                 orderDiv.innerHTML = `
                     <div class="flex justify-between items-center">
                         <div>
@@ -1332,16 +1164,9 @@ function showCartNotification(message) {
             orderHistory.innerHTML = '<p class="text-red-600 text-center py-8">Error loading orders. Please try again.</p>';
         }
     }
-
-    // We can now remove the "Add Mock Order" button
-    addOrderBtn.style.display = 'none'; // Hide the button
 })();
 
-// === CHANGED IN STEP 7 ===
 // --- Contact Form ---
-// Now sends data to the (not-yet-created) API
-// Note: We haven't created these API endpoints in app.py yet,
-// but this is how you would. For now, we'll keep using localStorage.
 (function() {
     const contactForm = document.getElementById('contactForm');
     const messageHistory = document.getElementById('messageHistory');
@@ -1362,7 +1187,6 @@ function showCartNotification(message) {
     }
 
     // This still uses localStorage, as we didn't build the API for it.
-    // This is a good next step for you to build!
     window.loadMessages = function() {
         try {
             const messages = JSON.parse(localStorage.getItem('messages')) || [];
@@ -1395,14 +1219,24 @@ function showCartNotification(message) {
         const message = contactMessage.value.trim();
         let hasError = false;
 
-        // ... (all your existing validation) ...
-        if (!name) { /* ... */ hasError = true; }
-        if (!email) { /* ... */ hasError = true; }
-        if (!message) { /* ... */ hasError = true; }
+        if (!name) { 
+            contactNameError.textContent = 'Name is required';
+            contactNameError.classList.remove('hidden');
+            hasError = true; 
+        }
+        if (!email) { 
+            contactEmailError.textContent = 'Email is required';
+            contactEmailError.classList.remove('hidden');
+            hasError = true; 
+        }
+        if (!message) { 
+            contactMessageError.textContent = 'Message is required';
+            contactMessageError.classList.remove('hidden');
+            hasError = true; 
+        }
         if (hasError) return;
 
         // TODO: Create a POST /api/contact endpoint and send this data
-        // For now, we just save to localStorage
         try {
             const messages = JSON.parse(localStorage.getItem('messages')) || [];
             messages.push({ name, email, message, date: new Date().toLocaleDateString() });
@@ -1419,7 +1253,6 @@ function showCartNotification(message) {
 
 // --- Chatbot (Unchanged) ---
 (function() {
-    // ... (all code in this section remains the same) ...
     const chatMessages = document.getElementById('chatMessages');
     const chatInput = document.getElementById('chatInput');
     const sendMessageBtn = document.getElementById('sendMessage');
@@ -1453,32 +1286,36 @@ function showCartNotification(message) {
         setTimeout(() => addMessage(response), 1000);
     }
 
-    sendMessageBtn.addEventListener('click', () => {
-        const message = chatInput.value.trim();
-        if (message) {
-            addMessage(message, true);
-            chatInput.value = '';
-            handleMessage(message);
-        }
-    });
-
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessageBtn.click();
-    });
-
-    quickReplies.forEach(button => {
-        button.addEventListener('click', () => {
-            const message = button.textContent;
-            addMessage(message, true);
-            handleMessage(message);
+    if(sendMessageBtn) {
+        sendMessageBtn.addEventListener('click', () => {
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                chatInput.value = '';
+                handleMessage(message);
+            }
         });
-    });
+    }
+
+    if(chatInput) {
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessageBtn.click();
+        });
+    }
+
+    if(quickReplies) {
+        quickReplies.forEach(button => {
+            button.addEventListener('click', () => {
+                const message = button.textContent;
+                addMessage(message, true);
+                handleMessage(message);
+            });
+        });
+    }
 })();
 
 // --- Tip & Rating (Unchanged) ---
-// This is also a good candidate for a new API endpoint!
 (function() {
-    // ... (all code in this section remains the same) ...
     const tipButtons = document.querySelectorAll('.tip-btn');
     const customTip = document.getElementById('customTip');
     const submitTip = document.getElementById('submitTip');
@@ -1493,103 +1330,112 @@ function showCartNotification(message) {
     let selectedTipAmount = 0;
 
     function clearTipErrors() {
-        deliveryPartnerName.classList.remove('error-border');
-        partnerNameError.classList.add('hidden');
-        ratingError.classList.add('hidden');
-        customTip.classList.remove('error-border');
-        tipError.classList.add('hidden');
+        if(deliveryPartnerName) deliveryPartnerName.classList.remove('error-border');
+        if(partnerNameError) partnerNameError.classList.add('hidden');
+        if(ratingError) ratingError.classList.add('hidden');
+        if(customTip) customTip.classList.remove('error-border');
+        if(tipError) tipError.classList.add('hidden');
     }
 
-    ratingStars.forEach(star => {
-        star.addEventListener('click', () => {
-            selectedRating = parseInt(star.getAttribute('data-rating'));
-            ratingStars.forEach((s, index) => {
-                s.classList.toggle('text-yellow-400', index < selectedRating);
-                s.classList.toggle('text-gray-300', index >= selectedRating);
-            });
-            clearTipErrors();
-        });
-    });
-
-    tipButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            tipButtons.forEach(btn => btn.classList.remove('gradient-bg', 'text-white'));
-            button.classList.add('gradient-bg', 'text-white');
-            selectedTipAmount = parseFloat(button.getAttribute('data-amount'));
-            customTip.value = '';
-            clearTipErrors();
-        });
-    });
-
-    customTip.addEventListener('input', () => {
-        tipButtons.forEach(btn => btn.classList.remove('gradient-bg', 'text-white'));
-        const value = parseFloat(customTip.value);
-        selectedTipAmount = (value >= 0 && !isNaN(value)) ? value : 0;
-        clearTipErrors();
-    });
-
-    submitTip.addEventListener('click', () => {
-        clearTipErrors();
-        const partnerName = deliveryPartnerName.value.trim();
-        let hasError = false;
-
-        if (!partnerName) {
-            deliveryPartnerName.classList.add('error-border');
-            partnerNameError.textContent = 'Please enter the delivery partner name';
-            partnerNameError.classList.remove('hidden');
-            hasError = true;
-        }
-        if (selectedRating === 0) {
-            ratingError.textContent = 'Please rate your delivery experience';
-            ratingError.classList.remove('hidden');
-            hasError = true;
-        }
-        if (selectedTipAmount === 0) {
-            customTip.classList.add('error-border');
-            tipError.textContent = 'Please select or enter a tip amount';
-            tipError.classList.remove('hidden');
-            hasError = true;
-        }
-        if (hasError) return;
-
-        // TODO: Create a POST /api/tip endpoint
-        const tipEntry = document.createElement('div');
-        tipEntry.className = 'bg-orange-50 p-4 rounded-lg';
-        tipEntry.innerHTML = `
-            <div class="flex justify-between items-center">
-                <span class="font-semibold">${partnerName}</span>
-                <span class="text-green-600 font-bold">₹${selectedTipAmount.toFixed(2)}</span>
-            </div>
-            <div class="flex text-yellow-400 mt-1">
-                ${'★'.repeat(selectedRating)}${'☆'.repeat(5 - selectedRating)}
-            </div>
-            <div class="text-sm text-gray-600 mt-2">${new Date().toLocaleDateString()}</div>
-        `;
-        if (tipHistory.querySelector('.text-gray-600')) {
-            tipHistory.innerHTML = '';
-        }
-        tipHistory.prepend(tipEntry);
-        deliveryPartnerName.value = '';
+    if(ratingStars) {
         ratingStars.forEach(star => {
-            star.classList.add('text-gray-300');
-            star.classList.remove('text-yellow-400');
+            star.addEventListener('click', () => {
+                selectedRating = parseInt(star.getAttribute('data-rating'));
+                ratingStars.forEach((s, index) => {
+                    s.classList.toggle('text-yellow-400', index < selectedRating);
+                    s.classList.toggle('text-gray-300', index >= selectedRating);
+                });
+                clearTipErrors();
+            });
         });
-        tipButtons.forEach(btn => btn.classList.remove('gradient-bg', 'text-white'));
-        customTip.value = '';
-        selectedRating = 0;
-        selectedTipAmount = 0;
-        showCartNotification(`Thank you for tipping ${partnerName}!`);
-    });
+    }
+
+    if(tipButtons) {
+        tipButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tipButtons.forEach(btn => btn.classList.remove('gradient-bg', 'text-white'));
+                button.classList.add('gradient-bg', 'text-white');
+                selectedTipAmount = parseFloat(button.getAttribute('data-amount'));
+                if(customTip) customTip.value = '';
+                clearTipErrors();
+            });
+        });
+    }
+
+    if(customTip) {
+        customTip.addEventListener('input', () => {
+            if(tipButtons) tipButtons.forEach(btn => btn.classList.remove('gradient-bg', 'text-white'));
+            const value = parseFloat(customTip.value);
+            selectedTipAmount = (value >= 0 && !isNaN(value)) ? value : 0;
+            clearTipErrors();
+        });
+    }
+
+    if(submitTip) {
+        submitTip.addEventListener('click', () => {
+            clearTipErrors();
+            if(!deliveryPartnerName) return; // In case element doesn't exist
+            
+            const partnerName = deliveryPartnerName.value.trim();
+            let hasError = false;
+
+            if (!partnerName) {
+                deliveryPartnerName.classList.add('error-border');
+                partnerNameError.textContent = 'Please enter the delivery partner name';
+                partnerNameError.classList.remove('hidden');
+                hasError = true;
+            }
+            if (selectedRating === 0) {
+                ratingError.textContent = 'Please rate your delivery experience';
+                ratingError.classList.remove('hidden');
+                hasError = true;
+            }
+            if (selectedTipAmount === 0) {
+                customTip.classList.add('error-border');
+                tipError.textContent = 'Please select or enter a tip amount';
+                tipError.classList.remove('hidden');
+                hasError = true;
+            }
+            if (hasError) return;
+
+            // TODO: Create a POST /api/tip endpoint
+            const tipEntry = document.createElement('div');
+            tipEntry.className = 'bg-orange-50 p-4 rounded-lg';
+            tipEntry.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="font-semibold">${partnerName}</span>
+                    <span class="text-green-600 font-bold">₹${selectedTipAmount.toFixed(2)}</span>
+                </div>
+                <div class="flex text-yellow-400 mt-1">
+                    ${'★'.repeat(selectedRating)}${'☆'.repeat(5 - selectedRating)}
+                </div>
+                <div class="text-sm text-gray-600 mt-2">${new Date().toLocaleDateString()}</div>
+            `;
+            if (tipHistory.querySelector('.text-gray-600')) {
+                tipHistory.innerHTML = '';
+            }
+            tipHistory.prepend(tipEntry);
+            deliveryPartnerName.value = '';
+            ratingStars.forEach(star => {
+                star.classList.add('text-gray-300');
+                star.classList.remove('text-yellow-400');
+            });
+            tipButtons.forEach(btn => btn.classList.remove('gradient-bg', 'text-white'));
+            customTip.value = '';
+            selectedRating = 0;
+            selectedTipAmount = 0;
+            showCartNotification(`Thank you for tipping ${partnerName}!`);
+        });
+    }
 })();
 
 // --- Initial Page Load ---
 (function() {
-    window.checkLoginStatus(); // Check if we have a token and show the correct page
-    window.updateCartCount();  // Update cart from localStorage
-    
-    // The checkLoginStatus() function now handles loading data
-    // if the user is already logged in.
+    // Check if we have a token and show the correct page
+    window.checkLoginStatus(); 
+    // Update cart count from localStorage on every page load
+    window.updateCartCount();  
 })();
-        </script>
+</script>
 </body>
 </html>
